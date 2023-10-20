@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://tp34anxvjcjr"]
+
+[ext_resource type="PackedScene" uid="uid://b122jxwbm084y" path="res://TileMaps/Dungeon Ruins Tileset/tile_map_Dark.tscn" id="1_oyeyo"]
+
+[node name="TesterLevel" type="Node2D"]
+
+[node name="TileMap" parent="." instance=ExtResource("1_oyeyo")]
