@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://tp34anxvjcjr"]
+[gd_scene load_steps=3 format=3 uid="uid://tp34anxvjcjr"]
 
 [ext_resource type="PackedScene" uid="uid://b122jxwbm084y" path="res://TileMaps/Dungeon Ruins Tileset/tile_map_Dark.tscn" id="1_oyeyo"]
+[ext_resource type="PackedScene" uid="uid://cvc2umks0mbfi" path="res://Character.tscn" id="2_xl30f"]
 
 [node name="TesterLevel" type="Node2D"]
 
 [node name="TileMap" parent="." instance=ExtResource("1_oyeyo")]
+
+[node name="CharacterBody2D" parent="." instance=ExtResource("2_xl30f")]
+position = Vector2(241, 466)
