@@ -8,4 +8,6 @@
 [node name="TileMap" parent="." instance=ExtResource("1_oyeyo")]
 
 [node name="CharacterBody2D" parent="." instance=ExtResource("2_xl30f")]
-position = Vector2(241, 466)
+position = Vector2(240, 466)
+_gravity = 100.0
+_moveSpeed = 150.0

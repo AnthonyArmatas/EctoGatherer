@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cvc2umks0mbfi"]
+[gd_scene load_steps=17 format=3 uid="uid://cvc2umks0mbfi"]
 
 [ext_resource type="Script" path="res://PlatformerController.cs" id="1_cng4l"]
 [ext_resource type="Texture2D" uid="uid://cdgiu15u1e1gp" path="res://Sprites/Hero/run.png" id="2_r5lhh"]
@@ -26,19 +26,130 @@ animations = [{
 "speed": 4.0
 }]
 
+[sub_resource type="Animation" id="Animation_8c1fh"]
+resource_name = "Walk"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+
+[sub_resource type="Animation" id="Animation_sr6wh"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_wygj2"]
+resource_name = "Jump"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 1,
+"values": []
+}
+
+[sub_resource type="Animation" id="Animation_65mci"]
+resource_name = "Idle"
+length = 0.01
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6fxu3"]
+_data = {
+"Idle": SubResource("Animation_65mci"),
+"Jump": SubResource("Animation_wygj2"),
+"RESET": SubResource("Animation_sr6wh"),
+"Walk": SubResource("Animation_8c1fh")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_17365"]
+animation = &"Idle"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fijb5"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_17365")
+blend_point_0/pos = Vector2(0, 0)
+min_space = Vector2(-1, -1.1)
+max_space = Vector2(1, 1.1)
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_tmnkr"]
+min_space = Vector2(-1, -1.1)
+max_space = Vector2(1, 1.1)
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ltcci"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1uic7"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_dkmud"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_q0t57"]
+states/Idle/node = SubResource("AnimationNodeBlendSpace2D_fijb5")
+states/Idle/position = Vector2(309, 145)
+states/Walk/node = SubResource("AnimationNodeBlendSpace2D_tmnkr")
+states/Walk/position = Vector2(454, 119)
+transitions = ["Idle", "Walk", SubResource("AnimationNodeStateMachineTransition_ltcci"), "Walk", "Idle", SubResource("AnimationNodeStateMachineTransition_1uic7"), "Start", "Idle", SubResource("AnimationNodeStateMachineTransition_dkmud")]
+
 [node name="CharacterBody2D" type="CharacterBody2D"]
 script = ExtResource("1_cng4l")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-visible = false
+position = Vector2(35, -4.245)
 texture = ExtResource("2_r5lhh")
-offset = Vector2(-6.505, 0)
-hframes = 3
-vframes = 3
+vframes = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.5, 1.5)
 shape = SubResource("RectangleShape2D_6f4u6")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
 sprite_frames = SubResource("SpriteFrames_c6gjs")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_6fxu3")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_q0t57")
+anim_player = NodePath("../AnimationPlayer")
+parameters/Idle/blend_position = Vector2(-0.734392, 0.343681)
+parameters/Walk/blend_position = Vector2(-0.738624, 0.592018)

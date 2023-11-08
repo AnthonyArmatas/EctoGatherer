@@ -11,6 +11,7 @@ public partial class PlatformerController : CharacterBody2D
 	public override void _Ready()
 	{
 		GatherRequirements();
+		_sprite.TopLevel = true;
 	}
 
 	/// <summary>
@@ -31,6 +32,7 @@ public partial class PlatformerController : CharacterBody2D
 	{
 		GatherInput();
 		FlipSprite();
+		_sprite.GlobalPosition = _sprite.GlobalPosition.Lerp(GlobalPosition, (float)Engine.GetPhysicsInterpolationFraction());
 	}
 
 	/// <summary>
@@ -48,20 +50,20 @@ public partial class PlatformerController : CharacterBody2D
 
 	[Export] private bool _useRawInput = true;
 	private Vector2 _input;
-	private StringName _up = new StringName("Up"),
-		_down = new StringName("Down"),
-		_left = new StringName("Left"),
-		_right = new StringName("Right");
+	private bool _didJump = false;
 
 	/// <summary>
 	/// Gathers input from the player
 	/// </summary>
 	private void GatherInput()
 	{
-		_input = Input.GetVector(_left,_right,_up,_down);
+		_input = Input.GetVector(InputNames.Left, InputNames.Right, InputNames.Up, InputNames.Down);
 		if(_useRawInput){
 			_input = _input.GetRaw();
-		} 
+		}
+		if(Input.IsActionJustPressed(InputNames.Jump)){
+			_didJump = true;
+		}
 	}
 
 	#endregion
@@ -117,6 +119,7 @@ public partial class PlatformerController : CharacterBody2D
 	private void CalculateVelocityY(ref Vector2 vel, float delta)
 	{
 		ApplyGravity(ref vel, delta);
+		HandleJump(ref vel);
 	}
 
 	/// <summary>
@@ -129,6 +132,20 @@ public partial class PlatformerController : CharacterBody2D
 		_targetVelocityX = _input.X * _moveSpeed;
 		vel.X = Mathf.MoveToward(vel.X, _targetVelocityX, Mathf.Sign(_input.X) == Mathf.Sign(vel.X) ? _acceleration : _decceleration);
 	}
+	#endregion
+
+	#region Jump
+
+	[Export]private float _jumpForce = -600f;
+
+	private void HandleJump(ref Vector2 vel)
+	{
+		if(!IsOnFloor() || !_didJump) { return; }
+		_didJump = false;
+		vel.Y = _jumpForce;
+
+	}
+
 	#endregion
 
 	#region Animation
